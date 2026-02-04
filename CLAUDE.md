@@ -59,7 +59,9 @@ Every tool, regardless of backend, follows the same three steps:
 
 2. **`Makefile` target `build-<name>`** — produces `pkg/` then copies it into
    `web/binaries/<name>/`.  For Rust that means `wasm-pack build`; for C/C++ it
-   means running `download.sh`.
+   means running `download.sh`.  Aioli tools need a version subdirectory
+   (`web/binaries/<name>/<version>/`) because Aioli resolves binaries at
+   `<urlCDN>/<name>/<version>/<name>.{js,wasm}`.
 
 3. **`web/tools/<name>.ts`** — the tool module.  Exports an object with `id`, `name`,
    `description`, `init()`, and `render(container)`.  Register it in the

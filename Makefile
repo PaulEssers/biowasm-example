@@ -11,12 +11,12 @@ build-gc-calculator:
 	cp tools/gc_calculator/pkg/* web/binaries/gc_calculator/
 
 # kalign: binary downloaded from the biowasm CDN (stand-in for an Emscripten
-# compile step).  Aioli loads it from the CDN at runtime; the local copy in
-# web/binaries/kalign/ mirrors the tools/*/pkg/ convention.
+# compile step).  Aioli resolves <urlCDN>/<name>/<version>/<name>.{js,wasm},
+# so the version subdirectory is required.
 build-kalign:
 	cd tools/kalign && bash download.sh
-	mkdir -p web/binaries/kalign
-	cp tools/kalign/pkg/* web/binaries/kalign/
+	mkdir -p web/binaries/kalign/3.3.1
+	cp tools/kalign/pkg/* web/binaries/kalign/3.3.1/
 
 build-frontend: build-gc-calculator build-kalign
 	npx tsc

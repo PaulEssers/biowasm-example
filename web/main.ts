@@ -30,7 +30,10 @@ async function ensureAioli(): Promise<Aioli> {
   if (!sharedAioli) {
     const specs = TOOLS.flatMap((t) => t.aioliTools ?? []);
     if (DEBUG) console.log("[aioli] initializing with", specs);
-    sharedAioli = await new Aioli(specs, { debug: DEBUG });
+    // Serve binaries from the local dev server instead of the biowasm CDN.
+    // Aioli resolves each tool spec as <urlCDN>/<name>/<version>/<name>.{js,wasm}.
+    const urlCDN = new URL("binaries", location.href).href;
+    sharedAioli = await new Aioli(specs, { urlCDN, debug: DEBUG });
   }
   return sharedAioli;
 }

@@ -3,23 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GC Content Calculator</title>
+    <title>Biowasm Tools</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: sans-serif;
-            max-width: 720px;
-            margin: 40px auto;
-            padding: 0 20px;
+            display: flex;
+            height: 100vh;
         }
-        #upload {
-            margin-bottom: 8px;
+
+        /* --- sidebar --- */
+        nav#sidebar {
+            width: 200px;
+            min-width: 200px;
+            background: #1b2838;
+            padding: 24px 0;
         }
-        #status {
+        nav#sidebar h2 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #aed6f1;
+            padding: 0 16px;
+            margin-bottom: 12px;
+        }
+        nav#sidebar button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            border-left: 3px solid transparent;
+            color: #aaa;
+            font-size: 0.9rem;
+            cursor: pointer;
+            line-height: 1.3;
+        }
+        nav#sidebar button:hover       { background: rgba(255,255,255,0.06); }
+        nav#sidebar button.active      { border-left-color: #7dcea0; color: #fff; background: rgba(255,255,255,0.08); }
+        nav#sidebar button .desc       { display: block; font-size: 0.75rem; color: #666; margin-top: 1px; }
+        nav#sidebar button.loading     { opacity: 0.5; pointer-events: none; }
+
+        /* --- main content area --- */
+        main#tool-area {
+            flex: 1;
+            padding: 40px;
+            max-width: 760px;
+        }
+
+        /* --- shared styles used by tool modules --- */
+        .tool-panel        { display: none; }
+        .tool-panel.active { display: block; }
+
+        .status {
             margin: 12px 0;
             color: #555;
             font-style: italic;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -30,20 +74,41 @@
             padding: 8px 12px;
             border-bottom: 1px solid #ddd;
         }
-        th {
+        th { background: #f4f4f4; }
+
+        pre {
             background: #f4f4f4;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            margin-top: 12px;
+            font-size: 0.85rem;
         }
+
+        .run-btn {
+            margin-top: 8px;
+            padding: 6px 18px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .run-btn:disabled    { opacity: 0.4; cursor: not-allowed; }
+        .download-btn        { margin-top: 12px; }
     </style>
 </head>
 <body>
-    <h1>GC Content Calculator</h1>
-    <div id="upload">
-        <input type="file" id="fastaInput" accept=".fasta,.fa,.fna">
-    </div>
-    <div id="status">Select a FASTA file to begin.</div>
-    <div id="results"></div>
+    <nav id="sidebar">
+        <h2>Tools</h2>
+        <!-- buttons injected by main.js -->
+    </nav>
+    <main id="tool-area">
+        <!-- tool panels injected by main.js -->
+    </main>
 
-    <!-- main.js is an ES module; the dev server must serve from the project root -->
+    <!-- Aioli runtime — used by C/C++ (Emscripten) tools; not needed by wasm-pack tools -->
+    <script src="https://biowasm.com/cdn/v3/aioli.js"></script>
+
+    <!-- app entry point (ES module) -->
     <script type="module" src="main.js"></script>
 </body>
 </html>

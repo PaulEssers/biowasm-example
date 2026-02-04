@@ -1,71 +1,96 @@
-// wasm-pack output is copied into web/tools/<name>/ at build time so that the
-// dev server can serve web/ as its root.  The .d.ts declarations ship alongside
-// the .js glue, so TypeScript resolves types automatically.
-import init, { calculate_gc_content } from "./tools/gc_calculator/gc_calculator.js";
+import { tool as gcCalculator } from "./gc_calculator.js";
+import { tool as kalign } from "./kalign.js";
 
-interface GcResult {
+// ?debug in the URL enables verbose logging (both ours and aioli's internals).
+const DEBUG = new URLSearchParams(location.search).has("debug");
+
+// Each tool module exports an object conforming to this shape.
+// init() is called once (lazily, on first sidebar click).
+// render() is called once immediately after; the container persists.
+interface Tool {
+  id: string;
   name: string;
-  length: number;
-  gc_count: number;
-  gc_content: number;
+  description: string;
+  aioliTools?: string[];            // e.g. ["muscle/5.1.0"] — omit for wasm-pack tools
+  init(cli?: Aioli): Promise<void>; // cli is the shared Aioli instance (undefined for wasm-pack tools)
+  render(container: HTMLElement): void;
+}
+
+const TOOLS: Tool[] = [gcCalculator, kalign];
+
+// ---------------------------------------------------------------------------
+// Shared Aioli instance — all C/C++ tools run in one WebWorker with a shared
+// virtual filesystem so that output from one tool can be piped into the next.
+// Created lazily (on first C/C++ tool click) so a wasm-pack-only page pays
+// nothing.
+// ---------------------------------------------------------------------------
+let sharedAioli: Aioli | undefined;
+
+async function ensureAioli(): Promise<Aioli> {
+  if (!sharedAioli) {
+    const specs = TOOLS.flatMap((t) => t.aioliTools ?? []);
+    if (DEBUG) console.log("[aioli] initializing with", specs);
+    sharedAioli = await new Aioli(specs, { debug: DEBUG });
+  }
+  return sharedAioli;
 }
 
 async function main(): Promise<void> {
-  await init();
+  const sidebar = document.getElementById("sidebar")!;
+  const toolArea = document.getElementById("tool-area")!;
 
-  const input = document.getElementById("fastaInput") as HTMLInputElement;
-  const status = document.getElementById("status")!;
-  const resultsDiv = document.getElementById("results")!;
+  const initialized = new Set<string>();
+  let activeId: string | null = null;
 
-  input.addEventListener("change", () => {
-    const file = input.files?.[0];
-    if (!file) return;
+  for (const tool of TOOLS) {
+    // --- sidebar button ---
+    const btn = document.createElement("button");
+    btn.dataset.toolId = tool.id;
+    btn.innerHTML =
+      escapeHtml(tool.name) +
+      `<span class="desc">${escapeHtml(tool.description)}</span>`;
+    sidebar.appendChild(btn);
 
-    status.textContent = "Reading file…";
-    resultsDiv.innerHTML = "";
+    // --- persistent panel (shown/hidden on switch) ---
+    const panel = document.createElement("div");
+    panel.className = "tool-panel";
+    toolArea.appendChild(panel);
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const results: GcResult[] = JSON.parse(
-        calculate_gc_content(reader.result as string),
-      );
-
-      if (results.length === 0) {
-        status.textContent = "No sequences found in file.";
-        return;
+    btn.addEventListener("click", async () => {
+      // lazy init + render on first activation
+      if (!initialized.has(tool.id)) {
+        btn.classList.add("loading");
+        try {
+          const cli = tool.aioliTools ? await ensureAioli() : undefined;
+          await tool.init(cli);
+          tool.render(panel);
+          initialized.add(tool.id);
+        } catch (e: unknown) {
+          panel.textContent = `Failed to load: ${e instanceof Error ? e.message : String(e)}`;
+          console.error("[main] tool init failed", tool.id, e);
+        }
+        btn.classList.remove("loading");
       }
 
-      status.textContent = `Found ${results.length} sequence(s).`;
-
-      let html =
-        "<table>" +
-        "<thead><tr>" +
-        "<th>Sequence</th>" +
-        "<th>Length (bp)</th>" +
-        "<th>GC Count</th>" +
-        "<th>GC Content</th>" +
-        "</tr></thead>" +
-        "<tbody>";
-
-      for (const r of results) {
-        const pct = (r.gc_content * 100).toFixed(2);
-        html +=
-          "<tr>" +
-          `<td>${escapeHtml(r.name)}</td>` +
-          `<td>${r.length}</td>` +
-          `<td>${r.gc_count}</td>` +
-          `<td>${pct}%</td>` +
-          "</tr>";
+      // swap active panel
+      if (activeId !== tool.id) {
+        document.querySelectorAll(".tool-panel").forEach((p) =>
+          p.classList.remove("active"),
+        );
+        document.querySelectorAll("#sidebar button").forEach((b) =>
+          b.classList.remove("active"),
+        );
+        panel.classList.add("active");
+        btn.classList.add("active");
+        activeId = tool.id;
       }
+    });
+  }
 
-      html += "</tbody></table>";
-      resultsDiv.innerHTML = html;
-    };
-    reader.readAsText(file);
-  });
+  // auto-select first tool
+  sidebar.querySelector("button")?.click();
 }
 
-// Prevent XSS if a FASTA header ever contains HTML-like characters.
 function escapeHtml(str: string): string {
   const div = document.createElement("div");
   div.appendChild(document.createTextNode(str));

@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "wasm-example",
   "version": "1.0.0",
   "private": true,
@@ -6,6 +7,7 @@
     "serve": "serve web -l 8080"
   },
   "devDependencies": {
+    "@types/node": "^25.2.0",
     "serve": "^14",
     "typescript": "^5"
   }

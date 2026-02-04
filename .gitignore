@@ -5,4 +5,4 @@ node_modules/
 tools/*/target/
 tools/*/pkg/
 web/tools/
-web/main.js
+web/*.js

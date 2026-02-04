@@ -4,7 +4,8 @@
     "module": "ES2020",
     "moduleResolution": "bundler",
     "strict": true,
-    "lib": ["ES2020", "DOM"]
+    "lib": ["ES2020", "DOM"],
+    "types": ["node"]
   },
-  "include": ["web/**/*.ts"]
+  "include": ["./**/*.ts", "../web/aioli.d.ts", "../web/kalign.ts"]
 }

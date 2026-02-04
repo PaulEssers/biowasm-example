@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GC Content Calculator</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 720px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        #upload {
+            margin-bottom: 8px;
+        }
+        #status {
+            margin: 12px 0;
+            color: #555;
+            font-style: italic;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>GC Content Calculator</h1>
+    <div id="upload">
+        <input type="file" id="fastaInput" accept=".fasta,.fa,.fna">
+    </div>
+    <div id="status">Select a FASTA file to begin.</div>
+    <div id="results"></div>
+
+    <!-- main.js is an ES module; the dev server must serve from the project root -->
+    <script type="module" src="main.js"></script>
+</body>
+</html>

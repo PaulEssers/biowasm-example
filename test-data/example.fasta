@@ -1,0 +1,12 @@
+>seq1_high_gc
+GCGCGCGCGCGCGCGC
+>seq2_no_gc
+ATATATATATATAT
+>seq3_mixed
+ATGCATGCATGC
+>seq4_single_base
+A
+>seq5_multiline
+ATGCGATCGA
+TGCATGCATG
+GCTAGCTAGC

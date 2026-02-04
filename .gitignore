@@ -1,0 +1,8 @@
+.claude
+.devcontainer/*.bak
+
+node_modules/
+tools/*/target/
+tools/*/pkg/
+web/tools/
+web/main.js

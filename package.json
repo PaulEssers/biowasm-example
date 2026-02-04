@@ -1,0 +1,12 @@
+{
+  "name": "wasm-example",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "serve web -l 8080"
+  },
+  "devDependencies": {
+    "serve": "^14",
+    "typescript": "^5"
+  }
+}

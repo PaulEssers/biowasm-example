@@ -4,11 +4,11 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
-import { align } from "../web/kalign.js";
+import { align } from "../web/tools/kalign.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SAMPLE_FASTA = readFileSync(
-  resolve(__dirname, "..", "test-data", "mafft_example.fasta"),
+  resolve(__dirname, "..", "test-data", "alignment_example.fasta"),
   "utf8",
 );
 

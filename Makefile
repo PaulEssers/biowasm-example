@@ -7,16 +7,16 @@ test-kalign:
 
 build-gc-calculator:
 	cd tools/gc_calculator && wasm-pack build --target web
-	mkdir -p web/tools/gc_calculator
-	cp tools/gc_calculator/pkg/* web/tools/gc_calculator/
+	mkdir -p web/binaries/gc_calculator
+	cp tools/gc_calculator/pkg/* web/binaries/gc_calculator/
 
 # kalign: binary downloaded from the biowasm CDN (stand-in for an Emscripten
 # compile step).  Aioli loads it from the CDN at runtime; the local copy in
-# web/tools/kalign/ mirrors the tools/*/pkg/ convention.
+# web/binaries/kalign/ mirrors the tools/*/pkg/ convention.
 build-kalign:
 	cd tools/kalign && bash download.sh
-	mkdir -p web/tools/kalign
-	cp tools/kalign/pkg/* web/tools/kalign/
+	mkdir -p web/binaries/kalign
+	cp tools/kalign/pkg/* web/binaries/kalign/
 
 build-frontend: build-gc-calculator build-kalign
 	npx tsc

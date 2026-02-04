@@ -1,5 +1,5 @@
-import { tool as gcCalculator } from "./gc_calculator.js";
-import { tool as kalign } from "./kalign.js";
+import { tool as gcCalculator } from "./tools/gc_calculator.js";
+import { tool as kalign } from "./tools/kalign.js";
 
 // ?debug in the URL enables verbose logging (both ours and aioli's internals).
 const DEBUG = new URLSearchParams(location.search).has("debug");

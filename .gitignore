@@ -4,5 +4,5 @@
 node_modules/
 tools/*/target/
 tools/*/pkg/
-web/tools/
-web/*.js
+web/binaries/
+web/**/*.js

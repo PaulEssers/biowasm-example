@@ -1,4 +1,4 @@
-import init, { calculate_gc_content } from "./tools/gc_calculator/gc_calculator.js";
+import init, { calculate_gc_content } from "../binaries/gc_calculator/gc_calculator.js";
 
 interface GcResult {
   name: string;

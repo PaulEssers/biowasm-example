@@ -18,8 +18,14 @@
       ],
       "settings": {
         "editor.formatOnSave": true
-      },
+      }
     }
   },
+  "mounts": [
+    // Mount SSH directory for access to your keys
+    "source=${localEnv:USERPROFILE}\\.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+    // Mount .claude directory to persist auth token across rebuilds
+    "source=${localEnv:USERPROFILE}\\.claude,target=/home/vscode/.claude,type=bind,consistency=cached"
+  ],
   "postCreateCommand": "npm install"
 }
